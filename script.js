@@ -68,4 +68,18 @@ document.addEventListener("DOMContentLoaded", () => {
     isImgCloneActive = false
   }
 
+  ScrollTrigger.create({
+    trigger: ".horizontal-scroll",
+    start: "top top",
+    end: () => `+=${window.innerHeight * 5}`,
+    pin: true,
+  })
+
+  ScrollTrigger.create({
+    trigger: ".marquee",
+    start: "top top",
+    onEnter: createPinnedMarqueeImgClone,
+    onEnterBack: createPinnedMarqueeImgClone,
+    onLeaveBack: removePinnedMarqueeImgClone,
+  })
   })
