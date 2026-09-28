@@ -119,4 +119,48 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.set(".horizontal-scroll-wrapper", { x: "0%" })
     },
   })
+
+  ScrollTrigger.create({
+    trigger: ".horizontal-scroll",
+    start: "top 50%",
+    end: () => `+=${window.innerHeight * 5.5}`,
+    onUpdate: self => {
+      const progress = self.progress
+
+      if (progress <= 0.05) {
+        const bgColorProgress = Math.min(progress / 0.05, 1)
+        gsap.set(".container", {
+          backgroundColor: interpolateColor(
+            lightColor,
+            darkColor,
+            bgColorProgress
+          ),
+        })
+      } else {
+        gsap.set(".container", { backgroundColor: darkColor })
+      }
+
+      if (progress <= 0.2 && flipAnimation) {
+        flipAnimation.progress(progress / 0.2)
+      }
+
+      if (progress > 0.2 && progress <= 0.95) {
+        if (flipAnimation) flipAnimation.progress(1)
+
+        const horizontalProgress = (progress - 0.2) / 0.75
+        gsap.set(".horizontal-scroll-wrapper", {
+          x: `${-66.67 * horizontalProgress}%`,
+        })
+
+        const imageTranslateX = -((66.67 / 100) * 3 * horizontalProgress) * 100
+        gsap.set(pinnedMarqueeImgClone, { x: `${imageTranslateX}%` })
+      }
+
+      if (progress > 0.95) {
+        if (flipAnimation) flipAnimation.progress(1)
+        gsap.set(pinnedMarqueeImgClone, { x: "-200%" })
+        gsap.set(".horizontal-scroll-wrapper", { x: "-66.67%" })
+      }
+    },
   })
+})
