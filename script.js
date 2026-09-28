@@ -82,4 +82,41 @@ document.addEventListener("DOMContentLoaded", () => {
     onEnterBack: createPinnedMarqueeImgClone,
     onLeaveBack: removePinnedMarqueeImgClone,
   })
+
+  let flipAnimation = null
+
+  ScrollTrigger.create({
+    trigger: ".horizontal-scroll",
+    start: "top 50%",
+    end: () => `+=${window.innerHeight * 5.5}`,
+    onEnter: () => {
+      if (pinnedMarqueeImgClone && isImgCloneActive && !flipAnimation) {
+        const state = Flip.getState(pinnedMarqueeImgClone)
+
+        gsap.set(pinnedMarqueeImgClone, {
+          position: "fixed",
+          left: 0,
+          top: 0,
+          width: "100%",
+          height: "100svh",
+          transform: "rotate(0deg)",
+          transformOrigin: "center center",
+        })
+
+        flipAnimation = Flip.from(state, {
+          duration: 1,
+          ease: "none",
+          paused: true,
+        })
+      }
+    },
+    onLeaveBack: () => {
+      if (flipAnimation) {
+        flipAnimation.kill()
+        flipAnimation = null
+      }
+      gsap.set(".container", { backgroundColor: lightColor })
+      gsap.set(".horizontal-scroll-wrapper", { x: "0%" })
+    },
+  })
   })
